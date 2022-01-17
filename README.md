@@ -82,19 +82,19 @@ $ curl -XPOST -H "Content-type: application/json" -v -d '{
 - Set the flask application into a faulty state returning a 500 error code.
 
 ```
-$ curl -XPOST 'localhost:5000/jump'
+$ curl 'localhost:5000/jump'
 {
     "code": 200,
     "message": "/jump - Greetings from Python!"
 }
 
-$ curl -XPOST 'localhost:5000/faulty'
+$ curl -X POST 'localhost:5000/faulty'
 {
     "code": 500,
     "message": "/faulty - Service will be in faulty state!"
 }
 
-$ curl -XPOST 'localhost:5000/jump'
+$ curl 'localhost:5000/jump'
 {"code":"500","message":"/jump - Service in faulty state"}
 
 ```
