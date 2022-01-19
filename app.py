@@ -5,9 +5,10 @@ import json
 import requests
 import copy
 
-from flask import Flask, request, Response
+from flask import Flask, request, Response, abort, jsonify, make_response
 
 app = Flask(__name__)
+faulty = False
 
 def resolve_header(headers, key):
     try:
@@ -25,8 +26,30 @@ def home():
     print(res.to_string())
     return res.to_json()
 
+@app.route('/faulty', methods=['POST'])
+def fault_server():
+    headers = request.headers
+
+    global faulty
+    faulty = True
+
+    res = JumpResponse("/faulty - Service will be in faulty state!", 500)
+    print(res.to_string())
+    return res.to_json()
+
 @app.route('/jump', methods=['GET', 'POST'])
 def jump():
+    global faulty
+    if faulty:
+        abort(
+            make_response(
+                jsonify({
+                    "message" : "/jump - Service in faulty state",
+                    "code": "500"}),
+                    500
+            )
+        )
+
     if request.method == 'GET':
         print("------------------")
         print("Received GET /jump")
